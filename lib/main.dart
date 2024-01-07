@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,10 +29,10 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Move Alarm Application'),
     );
   }
 }
@@ -56,6 +57,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String _errorMessage = '';
+  AccelerometerEvent _accelerometerValues = AccelerometerEvent(0, 0, 0);
 
   void _incrementCounter() {
     setState(() {
@@ -66,6 +69,32 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+  }
+
+  void _onAccelerometerEvent(AccelerometerEvent event) {
+    setState(() {
+      _accelerometerValues = event;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //listening to accelerometer event.
+    accelerometerEvents.listen(
+      (AccelerometerEvent event) {
+        _onAccelerometerEvent(event);
+      },
+      onError: (error) {
+        // Logic to handle error
+        // Needed for Android in case sensor is not available
+        setState(() {
+          _accelerometerValues = AccelerometerEvent(0, 0, 0);
+          _errorMessage = error.toString();
+        });
+      },
+      cancelOnError: true,
+    );
   }
 
   @override
@@ -110,6 +139,14 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              'Accelerometer: $_accelerometerValues',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              'Error: $_errorMessage',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
