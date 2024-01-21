@@ -57,64 +57,12 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class Clock extends StatefulWidget {
-  const Clock({Key? key}) : super(key: key);
-
-  @override
-  _ClockState createState() => _ClockState();
-}
-
-class _ClockState extends State<Clock> {
-  String formattedTime = DateFormat('kk:mm').format(DateTime.now());
-  String hour = DateFormat('a').format(DateTime.now());
-  late Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) => _update());
-  }
-
-  void _update() {
-    setState(() {
-      formattedTime = DateFormat('kk:mm:ss').format(DateTime.now());
-      hour = DateFormat('a').format(DateTime.now());
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(formattedTime),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 41.0, left: 10.0),
-                    child: Text(
-                      hour,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String _errorMessage = '';
   AccelerometerEvent _accelerometerValues = AccelerometerEvent(0, 0, 0);
+  String formattedTime = DateFormat('kk:mm').format(DateTime.now());
+  String hour = DateFormat('a').format(DateTime.now());
 
   void _incrementCounter() {
     setState(() {
@@ -151,6 +99,14 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       cancelOnError: true,
     );
+    Timer.periodic(const Duration(milliseconds: 500), (timer) => _update());
+  }
+
+  void _update() {
+    setState(() {
+      formattedTime = DateFormat('kk:mm:ss').format(DateTime.now());
+      hour = DateFormat('a').format(DateTime.now());
+    });
   }
 
   @override
@@ -194,7 +150,6 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // const Clock(),
             Text(
               'Current Time: $currentTime',
               style: Theme.of(context).textTheme.headlineMedium,
